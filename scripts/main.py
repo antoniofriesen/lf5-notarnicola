@@ -1,8 +1,8 @@
-# main.py - Central entry point for GDPR Access and Deletion Management
+# main.py - Central entry point for GDPR Access and Anonymization Management
 # Author: Antonio Friesen, Julian Brandtstaedter, Thore Heuer
 
 import gdpr_access
-import gdpr_deletion
+import gdpr_anonymization
 from db_utils import connect_2_db, close_db_connection
 from helpers import display_menu, get_valid_customer_id
 from mysql.connector.abstracts import MySQLConnectionAbstract
@@ -46,57 +46,48 @@ def handle_access(
     print(positions)
 
 
-def handle_deletion(
+def handle_anonymization(
     connection: MySQLConnectionAbstract | PooledMySQLConnection,
 ) -> None:
     """
-    Handle a GDPR Art. 17 erasure request.
+    Handle a GDPR Art. 17 erasure request via pseudonymization.
 
     Prompts the user for a customer ID, verifies the customer exists,
-    asks for confirmation, then cascades deletion of all related data
-    in the correct order to respect foreign key constraints.
+    asks for confirmation, then replaces the customer's personal data
+    with 'N/A'. Order and billing data is preserved to comply with
+    §147 AO (10-year retention obligation for financial records).
 
     Args:
         connection (MySQLConnectionAbstract | PooledMySQLConnection):
             an active database connection.
     """
-    print("Enter Customer ID to be deleted:")
+    print("Enter Customer ID to anonymize:")
     customer_id = get_valid_customer_id()
 
     print("Searching for Customer ID...")
     master_data = gdpr_access.get_all_customer_master_data(customer_id, connection)
 
     if not master_data:
-        print("Validation Error: Deletion impossible. Customer ID does not exist.")
+        print("Validation Error: Anonymization impossible. Customer ID does not exist.")
         return
 
-    print("WARNING: You are about to permanently delete this customer!")
+    print("WARNING: You are about to permanently anonymize this customer!")
 
     while True:
         print("Are you absolutely sure? (yes/no):")
         confirmation = input().strip().lower()
 
         if confirmation in ["yes", "y", "ja", "j"]:
-            step1_success = gdpr_deletion.delete_order_positions(customer_id, connection)
-            if not step1_success:
-                print("Error: Could not delete order positions. Deletion aborted.")
+            success = gdpr_anonymization.anonymize_customer(customer_id, connection)
+            if not success:
+                print("Error: Could not anonymize customer. Operation aborted.")
                 return
 
-            step2_success = gdpr_deletion.delete_orders(customer_id, connection)
-            if not step2_success:
-                print("Error: Could not delete orders. Deletion aborted.")
-                return
-
-            step3_success = gdpr_deletion.delete_customer(customer_id, connection)
-            if not step3_success:
-                print("Error: Could not delete customer. Deletion aborted.")
-                return
-
-            print("Success: Customer and all related data deleted.")
+            print("Success: Customer personal data has been anonymized.")
             return
 
         elif confirmation in ["no", "n", "nein"]:
-            print("Deletion canceled by user.")
+            print("Anonymization canceled by user.")
             return
 
         else:
@@ -125,7 +116,7 @@ def main() -> None:
             if user_input == "1":
                 handle_access(connection)
             elif user_input == "2":
-                handle_deletion(connection)
+                handle_anonymization(connection)
 
             close_db_connection(connection)
 
