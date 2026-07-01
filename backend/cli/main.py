@@ -1,10 +1,14 @@
 # main.py - Central entry point for GDPR Access and Anonymization Management
 # Author: Antonio Friesen, Julian Brandtstaedter, Thore Heuer
 
-import gdpr_access
-import gdpr_anonymization
-from db_utils import connect_2_db, close_db_connection
-from helpers import display_menu, get_valid_customer_id
+from backend.db.db_utils import connect_2_db, close_db_connection
+from backend.cli.helpers import display_menu, get_valid_customer_id
+from backend.models.customers import (
+    get_customer_master_data,
+    get_customer_orders,
+    get_customer_order_positions,
+    anonymize_customer,
+)
 from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
@@ -27,37 +31,37 @@ def handle_access(
     customer_id = get_valid_customer_id()
 
     print("Searching for Customer ID...")
-    master_data = gdpr_access.get_all_customer_master_data(customer_id, connection)
+    master_data = get_customer_master_data(customer_id, connection)
 
     if not master_data:
         print("Validation Error: Customer with ID does not exist.")
         return
 
-    orders = gdpr_access.get_customer_orders(customer_id, connection)
-    positions = gdpr_access.get_customer_order_positions(customer_id, connection)
+    orders = get_customer_orders(customer_id, connection)
+    positions = get_customer_order_positions(customer_id, connection)
 
     print("--- [ CUSTOMER MASTER DATA ] ---")
     for row in master_data:
-        print(f"  Vorname:     {row[0]}")
-        print(f"  Nachname:    {row[1]}")
-        print(f"  Straße:      {row[2]}")
-        print(f"  Hausnummer:  {row[3]}")
-        print(f"  PLZ:         {row[4]}")
-        print(f"  Stadt:       {row[5]}")
+        print(f"  First Name:   {row[0]}")
+        print(f"  Last Name:    {row[1]}")
+        print(f"  Street:       {row[2]}")
+        print(f"  House Number: {row[3]}")
+        print(f"  Postal Code:  {row[4]}")
+        print(f"  City:         {row[5]}")
 
     print("\n--- [ CUSTOMER ORDERS ] ---")
     for row in orders:
-        print(f"  Bestellung #{row[0]}")
-        print(f"    Datum:   {row[2].strftime('%d.%m.%Y')}")
-        print(f"    Betrag:  {row[1]} €")
+        print(f"  Order #{row[0]}")
+        print(f"    Date:    {row[2].strftime('%d.%m.%Y')}")
+        print(f"    Amount:  {row[1]} €")
 
     print("\n--- [ CUSTOMER ORDER POSITIONS ] ---")
     for i, row in enumerate(positions, start=1):
         print(f"  Position #{i}")
-        print(f"    Produkt:  {row[3]}")
-        print(f"    Einheit:  {row[4] if row[4] else '-'}")
-        print(f"    Preis:    {row[5]} €")
-        print(f"    Menge:    {row[6]}")
+        print(f"    Product:  {row[3]}")
+        print(f"    Unit:     {row[4] if row[4] else '-'}")
+        print(f"    Price:    {row[5]} €")
+        print(f"    Quantity: {row[6]}")
 
 
 def handle_anonymization(
@@ -79,7 +83,7 @@ def handle_anonymization(
     customer_id = get_valid_customer_id()
 
     print("Searching for Customer ID...")
-    master_data = gdpr_access.get_all_customer_master_data(customer_id, connection)
+    master_data = get_customer_master_data(customer_id, connection)
 
     if not master_data:
         print("Validation Error: Anonymization impossible. Customer ID does not exist.")
@@ -92,7 +96,7 @@ def handle_anonymization(
         confirmation = input().strip().lower()
 
         if confirmation in ["yes", "y", "ja", "j"]:
-            success = gdpr_anonymization.anonymize_customer(customer_id, connection)
+            success = anonymize_customer(customer_id, connection)
             if not success:
                 print("Error: Could not anonymize customer. Operation aborted.")
                 return
