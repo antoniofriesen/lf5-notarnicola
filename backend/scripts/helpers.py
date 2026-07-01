@@ -10,7 +10,7 @@ def display_menu() -> None:
     print("      GDPR DATA MANAGEMENT SYSTEM       ")
     print("========================================")
     print("1) GDPR Art. 15: Access")
-    print("2) GDPR Art. 17: Deletion")
+    print("2) GDPR Art. 17: Anonymization")
     print("3) Exit")
     print("========================================")
 
