@@ -37,13 +37,27 @@ def handle_access(
     positions = gdpr_access.get_customer_order_positions(customer_id, connection)
 
     print("--- [ CUSTOMER MASTER DATA ] ---")
-    print(master_data)
+    for row in master_data:
+        print(f"  Vorname:     {row[0]}")
+        print(f"  Nachname:    {row[1]}")
+        print(f"  Straße:      {row[2]}")
+        print(f"  Hausnummer:  {row[3]}")
+        print(f"  PLZ:         {row[4]}")
+        print(f"  Stadt:       {row[5]}")
 
-    print("--- [ CUSTOMER ORDERS ] ---")
-    print(orders)
+    print("\n--- [ CUSTOMER ORDERS ] ---")
+    for row in orders:
+        print(f"  Bestellung #{row[0]}")
+        print(f"    Datum:   {row[2].strftime('%d.%m.%Y')}")
+        print(f"    Betrag:  {row[1]} €")
 
-    print("--- [ CUSTOMER ORDER POSITIONS ] ---")
-    print(positions)
+    print("\n--- [ CUSTOMER ORDER POSITIONS ] ---")
+    for i, row in enumerate(positions, start=1):
+        print(f"  Position #{i}")
+        print(f"    Produkt:  {row[3]}")
+        print(f"    Einheit:  {row[4] if row[4] else '-'}")
+        print(f"    Preis:    {row[5]} €")
+        print(f"    Menge:    {row[6]}")
 
 
 def handle_anonymization(
