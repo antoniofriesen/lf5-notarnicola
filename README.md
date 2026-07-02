@@ -106,7 +106,7 @@ docker compose exec -i mysql mysql -u root -proot lf5 < db/lf5.sql
 ### 8. Run the application
 
 ```bash
-python3 backend/cli/main.py
+python3 run.py
 ```
 
 ---
