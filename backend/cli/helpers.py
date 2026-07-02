@@ -7,11 +7,75 @@ def display_menu() -> None:
     Print the main menu of the GDPR data management system to the console.
     """
     print("========================================")
-    print("      GDPR DATA MANAGEMENT SYSTEM       ")
+    print("      NOTARNICOLA DATA MANAGEMENT SYSTEM       ")
     print("========================================")
+    print("1) GDPR")
+    print("2) Customers")
+    print("3) Orders")
+    print("4) Products")
+    print("5) Exit")
+    print("========================================")
+
+
+def display_gdpr_menu() -> None:
+    """
+    Print the gdpr menu of the Notarnicola data management system to the console.
+    """
+    print("========================================")
+    print("      NOTARNICOLA DATA MANAGEMENT SYSTEM       ")
+    print("========================================")
+    print("-> GDPR MENU <-")
     print("1) GDPR Art. 15: Access")
     print("2) GDPR Art. 17: Anonymization")
-    print("3) Exit")
+    print("3) Back")
+    print("========================================")
+
+
+def display_customer_menu() -> None:
+    """
+    Print the customer menu of the Notarnicola data management system to the console.
+    """
+    print("========================================")
+    print("      NOTARNICOLA DATA MANAGEMENT SYSTEM       ")
+    print("========================================")
+    print("-> CUSTOMER MENU <-")
+    print("1) Create new customer")
+    print("2) Get all customer data")
+    print("3) Update customer")
+    print("4) Anonymize customer")
+    print("5) Back")
+    print("========================================")
+
+
+def display_order_menu() -> None:
+    """
+    Print the order menu of the Notarnicola data management system to the console.
+    """
+    print("========================================")
+    print("      NOTARNICOLA DATA MANAGEMENT SYSTEM       ")
+    print("========================================")
+    print("-> ORDER MENU <-")
+    print("1) Create new order")
+    print("2) Get all order data")
+    print("3) Update order")
+    print("4) Cancel order")
+    print("5) Back")
+    print("========================================")
+
+
+def display_product_menu() -> None:
+    """
+    Print the product menu of the Notarnicola data management system to the console.
+    """
+    print("========================================")
+    print("      NOTARNICOLA DATA MANAGEMENT SYSTEM       ")
+    print("========================================")
+    print("-> PRODUCT MENU <-")
+    print("1) Create new product")
+    print("2) Get all product data")
+    print("3) Update product")
+    print("4) Deactivate product")
+    print("5) Back")
     print("========================================")
 
 
